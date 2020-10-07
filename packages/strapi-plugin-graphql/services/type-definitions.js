@@ -204,7 +204,6 @@ const buildAssocResolvers = model => {
         }
         default: {
           resolver[association.alias] = async (obj, options) => {
-            console.log(association.nature, obj[association.alias]);
             const { nature, alias, via } = association;
 
             const loader = strapi.plugins.graphql.services['data-loaders'].loaders[targetModel.uid];
@@ -252,8 +251,6 @@ const buildAssocResolvers = model => {
               const entry = await contentManager.fetch(model.uid, obj[primaryKey], {
                 populate: [association.alias],
               });
-
-              console.log();
 
               return loader.load({
                 options: {
