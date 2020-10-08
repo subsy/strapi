@@ -156,6 +156,9 @@ const buildQueryContext = ({ options, graphqlContext }) => {
     ...convertToParams(_.omit(opts, 'where')),
     ...convertToQuery(opts.where),
   };
+  _.set(ctx.query, '_populate', []);
+
+  console.log(ctx.query);
 
   ctx.params = convertToParams(opts);
 
