@@ -24,6 +24,7 @@ const createEventHub = require('./services/event-hub');
 const createWebhookRunner = require('./services/webhook-runner');
 const { webhookModel, createWebhookStore } = require('./services/webhook-store');
 const { createCoreStore, coreStoreModel } = require('./services/core-store');
+const { lockModel, createLockService } = require('./services/lock');
 const createEntityService = require('./services/entity-service');
 const entityValidator = require('./services/entity-validator');
 const createTelemetry = require('./services/metrics');
@@ -304,6 +305,7 @@ class Strapi {
     });
 
     // Init core store
+    this.models['strapi_locks'] = lockModel(this.config);
     this.models['core_store'] = coreStoreModel(this.config);
     this.models['strapi_webhooks'] = webhookModel(this.config);
 
@@ -320,6 +322,8 @@ class Strapi {
     await this.startWebhooks();
 
     this.entityValidator = entityValidator;
+
+    this.lockService = createLockService({ db: this.db });
 
     this.entityService = createEntityService({
       db: this.db,
