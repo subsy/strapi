@@ -188,6 +188,102 @@
           ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.publish"]]
         ]
       }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-type/:model/:id/actions/lock",
+      "handler": "EditingLock.lock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-type/:model/actions/lock",
+      "handler": "EditingLock.lock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-type/:model/:id/actions/extend-lock",
+      "handler": "EditingLock.extendLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-type/:model/actions/extend-lock",
+      "handler": "EditingLock.extendLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-type/:model/:id/actions/unlock",
+      "handler": "EditingLock.unlock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-type/:model/actions/unlock",
+      "handler": "EditingLock.unlock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/collection-type/:model/:id/actions/lock",
+      "handler": "EditingLock.getLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/single-type/:model/actions/lock",
+      "handler": "EditingLock.getLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
     }
   ]
 }

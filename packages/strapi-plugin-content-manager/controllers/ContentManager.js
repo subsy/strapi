@@ -2,6 +2,11 @@
 
 const _ = require('lodash');
 const { contentTypes: contentTypesUtils } = require('strapi-utils');
+const {
+  PUBLISHED_AT_ATTRIBUTE,
+  CREATED_BY_ATTRIBUTE,
+  UPDATED_BY_ATTRIBUTE,
+} = contentTypesUtils.constants;
 
 const parseMultipartBody = require('../utils/parse-multipart');
 const {
@@ -9,42 +14,7 @@ const {
   validateCheckUIDAvailabilityInput,
   validateUIDField,
 } = require('./validation');
-
-const {
-  PUBLISHED_AT_ATTRIBUTE,
-  CREATED_BY_ATTRIBUTE,
-  UPDATED_BY_ATTRIBUTE,
-} = contentTypesUtils.constants;
-
-const ACTIONS = {
-  read: 'plugins::content-manager.explorer.read',
-  create: 'plugins::content-manager.explorer.create',
-  edit: 'plugins::content-manager.explorer.update',
-  delete: 'plugins::content-manager.explorer.delete',
-  publish: 'plugins::content-manager.explorer.publish',
-};
-
-const findEntityAndCheckPermissions = async (ability, action, model, id) => {
-  const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
-  const entity = await contentManagerService.fetch(model, id);
-
-  if (_.isNil(entity)) {
-    throw strapi.errors.notFound();
-  }
-
-  const roles = _.has(entity, 'created_by.id')
-    ? await strapi.query('role', 'admin').find({ 'users.id': entity[CREATED_BY_ATTRIBUTE].id }, [])
-    : [];
-  const entityWithRoles = _.set(_.cloneDeep(entity), `${CREATED_BY_ATTRIBUTE}.roles`, roles);
-
-  const pm = strapi.admin.services.permission.createPermissionsManager(ability, action, model);
-
-  if (pm.ability.cannot(pm.action, pm.toSubject(entityWithRoles))) {
-    throw strapi.errors.forbidden();
-  }
-
-  return { pm, entity: entityWithRoles };
-};
+const { ACTIONS } = require('../services/constants');
 
 module.exports = {
   async generateUID(ctx) {
@@ -139,8 +109,9 @@ module.exports = {
       state: { userAbility },
       params: { model, id },
     } = ctx;
+    const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
 
-    const { pm, entity } = await findEntityAndCheckPermissions(
+    const { pm, entity } = await contentManagerService.findEntityAndCheckPermissions(
       userAbility,
       ACTIONS.read,
       model,
@@ -248,7 +219,7 @@ module.exports = {
     const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
     const modelDef = strapi.getModel(model);
 
-    const { pm, entity } = await findEntityAndCheckPermissions(
+    const { pm, entity } = await contentManagerService.findEntityAndCheckPermissions(
       userAbility,
       ACTIONS.edit,
       model,
@@ -299,7 +270,12 @@ module.exports = {
     } = ctx;
     const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
 
-    const { pm } = await findEntityAndCheckPermissions(userAbility, ACTIONS.delete, model, id);
+    const { pm } = await contentManagerService.findEntityAndCheckPermissions(
+      userAbility,
+      ACTIONS.delete,
+      model,
+      id
+    );
 
     const result = await contentManagerService.delete(model, { id });
 
@@ -338,7 +314,7 @@ module.exports = {
     } = ctx;
 
     const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
-    const { entity, pm } = await findEntityAndCheckPermissions(
+    const { entity, pm } = await contentManagerService.findEntityAndCheckPermissions(
       userAbility,
       ACTIONS.publish,
       model,
@@ -363,7 +339,7 @@ module.exports = {
     } = ctx;
 
     const contentManagerService = strapi.plugins['content-manager'].services.contentmanager;
-    const { entity, pm } = await findEntityAndCheckPermissions(
+    const { entity, pm } = await contentManagerService.findEntityAndCheckPermissions(
       userAbility,
       ACTIONS.publish,
       model,

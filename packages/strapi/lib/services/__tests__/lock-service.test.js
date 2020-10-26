@@ -54,7 +54,7 @@ describe('Lock service', () => {
 
       const create = jest.fn(lock => Promise.resolve(lock));
       const findOne = jest.fn(() => Promise.resolve(existingLock));
-      const deleteFn = jest.fn(() => Promise.resolve(existingLock));
+      const deleteFn = jest.fn(() => Promise.resolve([existingLock]));
       const db = {
         query: () => ({
           create,
@@ -103,7 +103,7 @@ describe('Lock service', () => {
 
         const create = jest.fn(lock => Promise.resolve(lock));
         const findOne = jest.fn(() => Promise.resolve(existingLock));
-        const deleteFn = jest.fn(() => Promise.resolve(existingLock));
+        const deleteFn = jest.fn(() => Promise.resolve([existingLock]));
         const db = {
           query: () => ({
             create,
@@ -146,7 +146,7 @@ describe('Lock service', () => {
 
         const create = jest.fn(lock => Promise.resolve(lock));
         const findOne = jest.fn(() => Promise.resolve(existingLock));
-        const deleteFn = jest.fn(() => Promise.resolve(existingLock));
+        const deleteFn = jest.fn(() => Promise.resolve([existingLock]));
         const db = {
           query: () => ({
             create,
@@ -241,7 +241,7 @@ describe('Lock service', () => {
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
-      const deleteFn = jest.fn(() => Promise.resolve(existingLock));
+      const deleteFn = jest.fn(() => Promise.resolve([existingLock]));
       const db = {
         query: () => ({ findOne, delete: deleteFn }),
       };
@@ -266,7 +266,7 @@ describe('Lock service', () => {
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
-      const deleteFn = jest.fn(() => Promise.resolve(null));
+      const deleteFn = jest.fn(() => Promise.resolve([null]));
       const db = {
         query: () => ({ findOne, delete: deleteFn }),
       };
@@ -287,7 +287,7 @@ describe('Lock service', () => {
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
-      const deleteFn = jest.fn(() => Promise.resolve(null));
+      const deleteFn = jest.fn(() => Promise.resolve([null]));
       const db = {
         query: () => ({ findOne, delete: deleteFn }),
       };

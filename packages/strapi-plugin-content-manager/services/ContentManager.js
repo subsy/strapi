@@ -6,12 +6,36 @@ const {
   sanitizeEntity,
   webhook: webhookUtils,
 } = require('strapi-utils');
-const { PUBLISHED_AT_ATTRIBUTE } = contentTypesUtils.constants;
+const { PUBLISHED_AT_ATTRIBUTE, CREATED_BY_ATTRIBUTE } = contentTypesUtils.constants;
 const { ENTRY_PUBLISH, ENTRY_UNPUBLISH } = webhookUtils.webhookEvents;
+
 /**
  * A set of functions called "actions" for `ContentManager`
  */
 module.exports = {
+  async findEntityAndCheckPermissions(ability, action, model, id) {
+    const entity = await this.fetch(model, id);
+
+    if (_.isNil(entity)) {
+      throw strapi.errors.notFound();
+    }
+
+    const roles = _.has(entity, 'created_by.id')
+      ? await strapi
+          .query('role', 'admin')
+          .find({ 'users.id': entity[CREATED_BY_ATTRIBUTE].id }, [])
+      : [];
+    const entityWithRoles = _.set(_.cloneDeep(entity), `${CREATED_BY_ATTRIBUTE}.roles`, roles);
+
+    const pm = strapi.admin.services.permission.createPermissionsManager(ability, action, model);
+
+    if (pm.ability.cannot(pm.action, pm.toSubject(entityWithRoles))) {
+      throw strapi.errors.forbidden();
+    }
+
+    return { pm, entity: entityWithRoles };
+  },
+
   fetchAll(model, query) {
     const { query: request, populate, ...filters } = query;
 
@@ -57,9 +81,18 @@ module.exports = {
     return strapi.entityService.create({ data: publishData, files }, { model });
   },
 
-  edit(params, { data, files }, { model } = {}) {
+  async edit(params, { data, files }, { model } = {}) {
     const publishData = _.omit(data, PUBLISHED_AT_ATTRIBUTE);
-    return strapi.entityService.update({ params, data: publishData, files }, { model });
+    const updatedEntry = await strapi.entityService.update(
+      { params, data: publishData, files },
+      { model }
+    );
+    await strapi.plugins['content-manager'].services.editinglock.updateLastUpdatedAtMetadata({
+      model,
+      entityId: params.id,
+    });
+
+    return updatedEntry;
   },
 
   delete(model, query) {
@@ -97,6 +130,11 @@ module.exports = {
       { model }
     );
 
+    await strapi.plugins['content-manager'].services.editinglock.updateLastUpdatedAtMetadata({
+      model,
+      entityId: params.id,
+    });
+
     strapi.eventHub.emit(ENTRY_PUBLISH, {
       model: modelDef.modelName,
       entry: sanitizeEntity(publishedEntry, { model: modelDef }),
@@ -112,6 +150,12 @@ module.exports = {
       { params, data: { [PUBLISHED_AT_ATTRIBUTE]: null } },
       { model }
     );
+
+    await strapi.plugins['content-manager'].services.editinglock.updateLastUpdatedAtMetadata({
+      model,
+      entityId: params.id,
+    });
+
     strapi.eventHub.emit(ENTRY_UNPUBLISH, {
       model: modelDef.modelName,
       entry: sanitizeEntity(unpublishedEntry, { model: modelDef }),

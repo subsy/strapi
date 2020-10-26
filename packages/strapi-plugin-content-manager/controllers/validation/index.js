@@ -7,6 +7,8 @@ const createModelConfigurationSchema = require('./model-configuration');
 
 const TYPES = ['singleType', 'collectionType'];
 
+const handleReject = error => Promise.reject(formatYupErrors(error));
+
 /**
  * Validates type kind
  */
@@ -71,10 +73,58 @@ const validateUIDField = (contentTypeUID, field) => {
   }
 };
 
+const validateLockInputSchema = yup
+  .object()
+  .shape({
+    metadata: yup.object().shape({
+      lastActivityDate: yup.date(),
+    }),
+    force: yup.boolean(),
+  })
+  .noUnknown();
+
+const validateLockInput = data => {
+  return validateLockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleReject);
+};
+
+const validateExtendLockInputSchema = yup
+  .object()
+  .shape({
+    uid: yup.string().required(),
+    metadata: yup.object().shape({
+      lastActivityDate: yup.date(),
+    }),
+  })
+  .noUnknown();
+
+const validateExtendLockInput = data => {
+  return validateExtendLockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleReject);
+};
+
+const validateUnlockInputSchema = yup
+  .object()
+  .shape({
+    uid: yup.string().required(),
+  })
+  .noUnknown();
+
+const validateUnlockInput = data => {
+  return validateUnlockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleReject);
+};
+
 module.exports = {
   createModelConfigurationSchema,
   validateKind,
   validateGenerateUIDInput,
   validateCheckUIDAvailabilityInput,
   validateUIDField,
+  validateLockInput,
+  validateExtendLockInput,
+  validateUnlockInput,
 };

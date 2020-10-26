@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const uuid = require('uuid/v4');
 
-const toDBObject = ({ key, metadata, ttl }, { now }) => {
+const metadataToDBFormat = metadata => {
   let stringifiedMetadata;
   try {
     stringifiedMetadata = JSON.stringify(metadata);
@@ -11,10 +11,14 @@ const toDBObject = ({ key, metadata, ttl }, { now }) => {
     throw new Error('lockservice: metadata param could not be stringified');
   }
 
+  return stringifiedMetadata;
+};
+
+const toDBObject = ({ key, metadata, ttl }, { now }) => {
   return {
     uid: uuid(),
     key,
-    metadata: stringifiedMetadata,
+    metadata: metadataToDBFormat(metadata),
     expiresAt: now + ttl,
   };
 };
@@ -35,6 +39,27 @@ const isLockFree = (lock, now) => {
   return !lock || (lock.expiresAt !== null && new Date(lock.expiresAt).getTime() <= now);
 };
 
+const validateKey = key => {
+  if (!_.isString(key) || _.isEmpty(key)) {
+    throw new Error('lockservice: key param has to be a non-empty string');
+  }
+};
+const validateUid = uid => {
+  if (!_.isString(uid) || _.isNil(uid)) {
+    throw new Error('lockservice: uid param has to be a non-empty string');
+  }
+};
+const validateTTL = (ttl, canBeNull = true) => {
+  if (!_.isInteger(ttl) && !(canBeNull && _.isNull(ttl))) {
+    throw new Error(`lockservice: ttl param has to be an integer${canBeNull ? ' or null' : ''}`);
+  }
+};
+
+const getNow = now => {
+  const isValid = !_.isNaN(new Date(now).getTime());
+  return isValid ? new Date(now).getTime() : Date.now();
+};
+
 const createLockService = ({ db }) => ({ prefix }) => {
   if (!_.isString(prefix) || _.isEmpty(prefix)) {
     throw new Error('lockservice: prefix param has to be a non-empty string');
@@ -44,37 +69,90 @@ const createLockService = ({ db }) => ({ prefix }) => {
 
   return {
     async delete(key, uid) {
-      if (!_.isString(uid) || _.isNil(uid)) {
-        throw new Error('lockservice: uid param has to be a non-empty string');
-      }
-
+      validateUid(uid);
       const prefixedKey = getPrefixedKey(key);
-      const lock = await lockQueries.delete({ key: prefixedKey, uid });
+      const [lock] = await lockQueries.delete({ key: prefixedKey, uid });
       return { lock: fromDBObject(lock, prefix) };
     },
 
-    async get(key) {
+    async get(key, now) {
+      const nowDate = getNow(now);
       const prefixedKey = getPrefixedKey(key);
       const existingLock = await lockQueries.findOne({ key: prefixedKey });
       return {
-        isLockFree: isLockFree(existingLock, Date.now()),
+        isLockFree: isLockFree(existingLock, nowDate),
         lock: fromDBObject(existingLock, prefix),
       };
     },
 
-    async set({ key, metadata = null, ttl = null } = {}, { force = false } = {}) {
-      if (!_.isString(key) || _.isEmpty(key)) {
-        throw new Error('lockservice: key param has to be a non-empty string');
-      }
-      if (!_.isInteger(ttl) && !_.isNull(key)) {
-        throw new Error('lockservice: ttl param has to be null or to be a integer');
+    async extend({ key, uid, ttl = 10000, metadata }, { mergeMetadata = false } = {}) {
+      validateUid(uid);
+      validateTTL(ttl, false);
+      const prefixedKey = getPrefixedKey(key);
+      const now = Date.now();
+      const updateData = { expiresAt: now + ttl };
+      const { isLockFree, lock: existingLock } = await this.get(key, now);
+
+      if (isLockFree || _.get(existingLock, 'uid') !== uid) {
+        // can only extend locks that are still valid
+        return {
+          success: false,
+          lock: existingLock,
+        };
       }
 
+      if (!_.isUndefined(metadata)) {
+        if (mergeMetadata) {
+          updateData.metadata = metadataToDBFormat(_.merge(existingLock.metadata, metadata));
+        } else {
+          updateData.metadata = metadataToDBFormat(metadata);
+        }
+      }
+
+      const updatedLock = await lockQueries.update({ key: prefixedKey, uid }, updateData);
+
+      return {
+        success: !!updatedLock,
+        lock: fromDBObject(updatedLock, prefix),
+      };
+    },
+
+    async editMetadata({ key, metadata }, { mergeMetadata = false } = {}) {
+      const prefixedKey = getPrefixedKey(key);
+      const { lock: existingLock } = await this.get(key);
+      if (_.isUndefined(metadata)) {
+        return {
+          success: false,
+          lock: existingLock,
+        };
+      }
+
+      let newMetadata;
+      if (mergeMetadata) {
+        newMetadata = metadataToDBFormat(_.merge(existingLock.metadata, metadata));
+      } else {
+        newMetadata = metadataToDBFormat(metadata);
+      }
+
+      const updatedLock = await lockQueries.update(
+        { key: prefixedKey, uid: existingLock.uid },
+        { metadata: newMetadata }
+      );
+
+      return {
+        success: !!updatedLock,
+        lock: fromDBObject(updatedLock, prefix),
+      };
+    },
+
+    async set({ key, metadata = null, ttl = null } = {}, { force = false } = {}) {
+      validateKey(key);
+      validateTTL(ttl);
       const prefixedKey = getPrefixedKey(key);
       let lock;
       const now = Date.now();
       const newLock = toDBObject({ key: prefixedKey, metadata, ttl }, { now });
-      const { isLockFree: isExistingLockFree, lock: existingLock } = await this.get(key);
+      const { isLockFree: isExistingLockFree, lock: existingLock } = await this.get(key, now);
 
       // lock doesn't exist in DB, so just need to create it
       if (!existingLock) {
