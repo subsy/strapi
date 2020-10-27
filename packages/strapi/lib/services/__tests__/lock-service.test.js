@@ -303,4 +303,304 @@ describe('Lock service', () => {
       expect(lockResult.lock).toBeNull();
     });
   });
+
+  describe('editMetadata', () => {
+    test('mergeMetadata: false', async () => {
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const existingLock = {
+        uid: '128b0285-9dc2-4335-a6a0-285b1a3fac77',
+        key: prefixedKey,
+        expiresAt: 1234,
+        metadata: '{"info":true}',
+      };
+      const newMetadata = { name: 'Pilou' };
+      const stringifiedNewMetadata = JSON.stringify(newMetadata);
+      const newLockExpected = { ...existingLock, metadata: stringifiedNewMetadata };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn(() => Promise.resolve(newLockExpected));
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.editMetadata({ key, metadata: newMetadata });
+
+      expect(update).toHaveBeenCalledWith(
+        { key: prefixedKey, uid: existingLock.uid },
+        { metadata: stringifiedNewMetadata }
+      );
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(true);
+      expect(lockResult.lock).toMatchObject({
+        key,
+        uid: existingLock.uid,
+        expiresAt: existingLock.expiresAt,
+        metadata: newMetadata,
+      });
+    });
+    test('mergeMetadata: true', async () => {
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const existingMetadata = { info: true, age: 12 };
+      const existingLock = {
+        uid: '128b0285-9dc2-4335-a6a0-285b1a3fac77',
+        key: prefixedKey,
+        expiresAt: 1234,
+        metadata: JSON.stringify(existingMetadata),
+      };
+      const newMetadata = { info: false, name: 'Pilou' };
+      const expectedMetadata = _.merge(existingMetadata, newMetadata);
+      const stringifiedExpectedMetadata = JSON.stringify(expectedMetadata);
+      const newLockExpected = { ...existingLock, metadata: stringifiedExpectedMetadata };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn(() => Promise.resolve(newLockExpected));
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.editMetadata(
+        { key, metadata: newMetadata },
+        { mergeMetadata: true }
+      );
+
+      expect(update).toHaveBeenCalledWith(
+        { key: prefixedKey, uid: existingLock.uid },
+        { metadata: stringifiedExpectedMetadata }
+      );
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(true);
+      expect(lockResult.lock).toMatchObject({
+        key,
+        uid: existingLock.uid,
+        expiresAt: existingLock.expiresAt,
+        metadata: expectedMetadata,
+      });
+    });
+    test('metadata: undefined', async () => {
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const existingLock = {
+        uid: '128b0285-9dc2-4335-a6a0-285b1a3fac77',
+        key: prefixedKey,
+        expiresAt: 1234,
+        metadata: '{"info":true}',
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn();
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.editMetadata({ key, metadata: undefined });
+
+      expect(update).toHaveBeenCalledTimes(0);
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(false);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: JSON.parse(existingLock.metadata),
+      });
+    });
+  });
+
+  describe('extend', () => {
+    test('extend 30 sec', async () => {
+      const ttl = 30000;
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
+      const existingLock = {
+        uid,
+        key: prefixedKey,
+        expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
+        metadata: '{"info":true}',
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn(() => ({ ...existingLock, expiresAt: Date.now() + ttl }));
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.extend({ key, uid, ttl });
+
+      expect(update).toHaveBeenCalledWith(
+        { key: prefixedKey, uid },
+        { expiresAt: expect.any(Number) }
+      );
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(true);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: JSON.parse(existingLock.metadata),
+        expiresAt: expect.anything(),
+      });
+      expect(new Date(lockResult.lock.expiresAt).getTime() > existingLock.expiresAt);
+    });
+    test('extend 30 sec + update metadata (merge: false)', async () => {
+      const ttl = 30000;
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
+      const newMetadata = { name: 'pilou' };
+      const stringifiedNewMetadata = JSON.stringify(newMetadata);
+      const existingLock = {
+        uid,
+        key: prefixedKey,
+        expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
+        metadata: '{"info":true}',
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn(() => ({
+        ...existingLock,
+        expiresAt: Date.now() + ttl,
+        metadata: stringifiedNewMetadata,
+      }));
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.extend({ key, uid, ttl, metadata: newMetadata });
+
+      expect(update).toHaveBeenCalledWith(
+        { key: prefixedKey, uid },
+        { expiresAt: expect.any(Number), metadata: stringifiedNewMetadata }
+      );
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(true);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: newMetadata,
+        expiresAt: expect.anything(),
+      });
+      expect(new Date(lockResult.lock.expiresAt).getTime() > existingLock.expiresAt);
+    });
+    test('extend 30 sec + update metadata (merge: true)', async () => {
+      const ttl = 30000;
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
+      const existingMetadata = { info: true, age: 12 };
+      const newMetadata = { info: false, name: 'pilou' };
+      const mergedMetadata = _.merge(existingMetadata, newMetadata);
+      const stringifiedMergedMetadata = JSON.stringify(mergedMetadata);
+      const existingLock = {
+        uid,
+        key: prefixedKey,
+        expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
+        metadata: JSON.stringify(existingMetadata),
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn(() => ({
+        ...existingLock,
+        expiresAt: Date.now() + ttl,
+        metadata: stringifiedMergedMetadata,
+      }));
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.extend(
+        { key, uid, ttl, metadata: newMetadata },
+        { mergeMetadata: true }
+      );
+
+      expect(update).toHaveBeenCalledWith(
+        { key: prefixedKey, uid },
+        { expiresAt: expect.any(Number), metadata: stringifiedMergedMetadata }
+      );
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(true);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: mergedMetadata,
+        expiresAt: expect.anything(),
+      });
+      expect(new Date(lockResult.lock.expiresAt).getTime() > existingLock.expiresAt);
+    });
+    test('wrong uid', async () => {
+      const ttl = 30000;
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
+      const existingLock = {
+        uid,
+        key: prefixedKey,
+        expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
+        metadata: '{"info":true}',
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn();
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.extend({ key, uid: 'wrong-uid', ttl });
+
+      expect(update).toHaveBeenCalledTimes(0);
+      expect(findOne).toHaveBeenCalledWith({ key: prefixedKey });
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(false);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: JSON.parse(existingLock.metadata),
+      });
+    });
+    test('lock has expired', async () => {
+      const ttl = 30000;
+      const key = `edit:article:1`;
+      const prefix = 'pluginName';
+      const prefixedKey = `${prefix}::${key}`;
+      const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
+      const existingLock = {
+        uid,
+        key: prefixedKey,
+        expiresAt: Date.now() - 5000, // existing lock has expired
+        metadata: '{"info":true}',
+      };
+
+      const findOne = jest.fn(() => Promise.resolve(existingLock));
+      const update = jest.fn();
+      const db = {
+        query: () => ({ findOne, update }),
+      };
+
+      const lockService = createLockService({ db })({ prefix });
+      const lockResult = await lockService.extend({ key, uid, ttl });
+
+      expect(update).toHaveBeenCalledTimes(0);
+      expect(lockResult).toBeDefined();
+      expect(lockResult.success).toBe(false);
+      expect(lockResult.lock).toMatchObject({
+        ...existingLock,
+        key,
+        metadata: JSON.parse(existingLock.metadata),
+      });
+    });
+  });
 });
