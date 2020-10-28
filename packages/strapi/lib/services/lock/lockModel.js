@@ -25,7 +25,7 @@ const lockModel = config => ({
       index: true,
     },
     metadata: {
-      type: 'string',
+      type: 'json',
       required: true,
     },
     expiresAt: {

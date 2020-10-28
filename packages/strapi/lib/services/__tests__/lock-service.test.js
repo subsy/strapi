@@ -30,7 +30,7 @@ describe('Lock service', () => {
         expect.objectContaining({
           uid: expect.stringMatching(v4Regex),
           key: `pluginName::${lock.key}`,
-          metadata: JSON.stringify(lock.metadata),
+          metadata: lock.metadata,
           expiresAt: expect.anything(),
         })
       );
@@ -76,7 +76,7 @@ describe('Lock service', () => {
         expect.objectContaining({
           uid: expect.stringMatching(v4Regex),
           key: `pluginName::${lock.key}`,
-          metadata: JSON.stringify(lock.metadata),
+          metadata: lock.metadata,
           expiresAt: expect.anything(),
         })
       );
@@ -129,7 +129,7 @@ describe('Lock service', () => {
           uid: existingLock.uid,
           key: lock.key,
           expiresAt: existingLock.expiresAt,
-          metadata: JSON.parse(existingLock.metadata),
+          metadata: existingLock.metadata,
         });
       }
     );
@@ -168,7 +168,7 @@ describe('Lock service', () => {
           expect.objectContaining({
             uid: expect.stringMatching(v4Regex),
             key: `pluginName::${lock.key}`,
-            metadata: JSON.stringify(lock.metadata),
+            metadata: lock.metadata,
             expiresAt: expect.anything(),
           })
         );
@@ -211,7 +211,7 @@ describe('Lock service', () => {
         expect(lockResult.lock).toMatchObject({
           ...existingLock,
           key: 'edit:article:1',
-          metadata: JSON.parse(existingLock.metadata),
+          metadata: existingLock.metadata,
         });
       }
     );
@@ -254,7 +254,7 @@ describe('Lock service', () => {
       expect(lockResult.lock).toMatchObject({
         ...existingLock,
         key: 'edit:article:1',
-        metadata: JSON.parse(existingLock.metadata),
+        metadata: existingLock.metadata,
       });
     });
     test('lock does not exist (uid: invalid, key: valid)', async () => {
@@ -316,8 +316,7 @@ describe('Lock service', () => {
         metadata: '{"info":true}',
       };
       const newMetadata = { name: 'Pilou' };
-      const stringifiedNewMetadata = JSON.stringify(newMetadata);
-      const newLockExpected = { ...existingLock, metadata: stringifiedNewMetadata };
+      const newLockExpected = { ...existingLock, metadata: newMetadata };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
       const update = jest.fn(() => Promise.resolve(newLockExpected));
@@ -330,7 +329,7 @@ describe('Lock service', () => {
 
       expect(update).toHaveBeenCalledWith(
         { key: prefixedKey, uid: existingLock.uid },
-        { metadata: stringifiedNewMetadata }
+        { metadata: newMetadata }
       );
       expect(lockResult).toBeDefined();
       expect(lockResult.success).toBe(true);
@@ -350,12 +349,11 @@ describe('Lock service', () => {
         uid: '128b0285-9dc2-4335-a6a0-285b1a3fac77',
         key: prefixedKey,
         expiresAt: 1234,
-        metadata: JSON.stringify(existingMetadata),
+        metadata: existingMetadata,
       };
       const newMetadata = { info: false, name: 'Pilou' };
       const expectedMetadata = _.merge(existingMetadata, newMetadata);
-      const stringifiedExpectedMetadata = JSON.stringify(expectedMetadata);
-      const newLockExpected = { ...existingLock, metadata: stringifiedExpectedMetadata };
+      const newLockExpected = { ...existingLock, metadata: expectedMetadata };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
       const update = jest.fn(() => Promise.resolve(newLockExpected));
@@ -371,7 +369,7 @@ describe('Lock service', () => {
 
       expect(update).toHaveBeenCalledWith(
         { key: prefixedKey, uid: existingLock.uid },
-        { metadata: stringifiedExpectedMetadata }
+        { metadata: expectedMetadata }
       );
       expect(lockResult).toBeDefined();
       expect(lockResult.success).toBe(true);
@@ -390,7 +388,7 @@ describe('Lock service', () => {
         uid: '128b0285-9dc2-4335-a6a0-285b1a3fac77',
         key: prefixedKey,
         expiresAt: 1234,
-        metadata: '{"info":true}',
+        metadata: { info: true },
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
@@ -408,7 +406,7 @@ describe('Lock service', () => {
       expect(lockResult.lock).toMatchObject({
         ...existingLock,
         key,
-        metadata: JSON.parse(existingLock.metadata),
+        metadata: existingLock.metadata,
       });
     });
   });
@@ -445,7 +443,7 @@ describe('Lock service', () => {
       expect(lockResult.lock).toMatchObject({
         ...existingLock,
         key,
-        metadata: JSON.parse(existingLock.metadata),
+        metadata: existingLock.metadata,
         expiresAt: expect.anything(),
       });
       expect(new Date(lockResult.lock.expiresAt).getTime() > existingLock.expiresAt);
@@ -457,19 +455,18 @@ describe('Lock service', () => {
       const prefixedKey = `${prefix}::${key}`;
       const uid = '128b0285-9dc2-4335-a6a0-285b1a3fac77';
       const newMetadata = { name: 'pilou' };
-      const stringifiedNewMetadata = JSON.stringify(newMetadata);
       const existingLock = {
         uid,
         key: prefixedKey,
         expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
-        metadata: '{"info":true}',
+        metadata: { info: true },
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
       const update = jest.fn(() => ({
         ...existingLock,
         expiresAt: Date.now() + ttl,
-        metadata: stringifiedNewMetadata,
+        metadata: newMetadata,
       }));
       const db = {
         query: () => ({ findOne, update }),
@@ -480,7 +477,7 @@ describe('Lock service', () => {
 
       expect(update).toHaveBeenCalledWith(
         { key: prefixedKey, uid },
-        { expiresAt: expect.any(Number), metadata: stringifiedNewMetadata }
+        { expiresAt: expect.any(Number), metadata: newMetadata }
       );
       expect(lockResult).toBeDefined();
       expect(lockResult.success).toBe(true);
@@ -501,19 +498,18 @@ describe('Lock service', () => {
       const existingMetadata = { info: true, age: 12 };
       const newMetadata = { info: false, name: 'pilou' };
       const mergedMetadata = _.merge(existingMetadata, newMetadata);
-      const stringifiedMergedMetadata = JSON.stringify(mergedMetadata);
       const existingLock = {
         uid,
         key: prefixedKey,
         expiresAt: Date.now() + 5000, // existing lock hasn't expired yet
-        metadata: JSON.stringify(existingMetadata),
+        metadata: existingMetadata,
       };
 
       const findOne = jest.fn(() => Promise.resolve(existingLock));
       const update = jest.fn(() => ({
         ...existingLock,
         expiresAt: Date.now() + ttl,
-        metadata: stringifiedMergedMetadata,
+        metadata: mergedMetadata,
       }));
       const db = {
         query: () => ({ findOne, update }),
@@ -527,7 +523,7 @@ describe('Lock service', () => {
 
       expect(update).toHaveBeenCalledWith(
         { key: prefixedKey, uid },
-        { expiresAt: expect.any(Number), metadata: stringifiedMergedMetadata }
+        { expiresAt: expect.any(Number), metadata: mergedMetadata }
       );
       expect(lockResult).toBeDefined();
       expect(lockResult.success).toBe(true);
@@ -568,7 +564,7 @@ describe('Lock service', () => {
       expect(lockResult.lock).toMatchObject({
         ...existingLock,
         key,
-        metadata: JSON.parse(existingLock.metadata),
+        metadata: existingLock.metadata,
       });
     });
     test('lock has expired', async () => {
@@ -599,7 +595,7 @@ describe('Lock service', () => {
       expect(lockResult.lock).toMatchObject({
         ...existingLock,
         key,
-        metadata: JSON.parse(existingLock.metadata),
+        metadata: existingLock.metadata,
       });
     });
   });

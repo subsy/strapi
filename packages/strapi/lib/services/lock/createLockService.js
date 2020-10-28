@@ -3,22 +3,11 @@
 const _ = require('lodash');
 const { v4: uuid } = require('uuid');
 
-const metadataToDBFormat = metadata => {
-  let stringifiedMetadata;
-  try {
-    stringifiedMetadata = JSON.stringify(metadata);
-  } catch {
-    throw new Error('lockservice: metadata param could not be stringified');
-  }
-
-  return stringifiedMetadata;
-};
-
 const toDBObject = ({ key, metadata, ttl }, { now }) => {
   return {
     uid: uuid(),
     key,
-    metadata: metadataToDBFormat(metadata),
+    metadata,
     expiresAt: now + ttl,
   };
 };
@@ -31,7 +20,6 @@ const fromDBObject = (lock, prefix) => {
   return {
     ...lock,
     key: lock.key.replace(new RegExp(`^${prefix}::`), ''),
-    metadata: JSON.parse(lock.metadata),
   };
 };
 
@@ -52,6 +40,13 @@ const validateUid = uid => {
 const validateTTL = (ttl, canBeNull = true) => {
   if (!_.isInteger(ttl) && !(canBeNull && _.isNull(ttl))) {
     throw new Error(`lockservice: ttl param has to be an integer${canBeNull ? ' or null' : ''}`);
+  }
+};
+const validateMetadata = metadata => {
+  try {
+    JSON.stringify(metadata);
+  } catch {
+    throw new Error('lockservice: metadata param could not be stringified');
   }
 };
 
@@ -88,6 +83,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
     async extend({ key, uid, ttl = 10000, metadata }, { mergeMetadata = false } = {}) {
       validateUid(uid);
       validateTTL(ttl, false);
+      validateMetadata(metadata);
       const prefixedKey = getPrefixedKey(key);
       const now = Date.now();
       const updateData = { expiresAt: now + ttl };
@@ -103,9 +99,9 @@ const createLockService = ({ db }) => ({ prefix }) => {
 
       if (!_.isUndefined(metadata)) {
         if (mergeMetadata) {
-          updateData.metadata = metadataToDBFormat(_.merge(existingLock.metadata, metadata));
+          updateData.metadata = _.merge(existingLock.metadata, metadata);
         } else {
-          updateData.metadata = metadataToDBFormat(metadata);
+          updateData.metadata = metadata;
         }
       }
 
@@ -118,6 +114,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
     },
 
     async editMetadata({ key, metadata }, { mergeMetadata = false } = {}) {
+      validateMetadata(metadata);
       const prefixedKey = getPrefixedKey(key);
       const { lock: existingLock } = await this.get(key);
       if (_.isUndefined(metadata) || !existingLock) {
@@ -129,9 +126,9 @@ const createLockService = ({ db }) => ({ prefix }) => {
 
       let newMetadata;
       if (mergeMetadata) {
-        newMetadata = metadataToDBFormat(_.merge(existingLock.metadata, metadata));
+        newMetadata = _.merge(existingLock.metadata, metadata);
       } else {
-        newMetadata = metadataToDBFormat(metadata);
+        newMetadata = metadata;
       }
 
       const updatedLock = await lockQueries.update(
@@ -148,6 +145,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
     async set({ key, metadata = null, ttl = null } = {}, { force = false } = {}) {
       validateKey(key);
       validateTTL(ttl);
+      validateMetadata(metadata);
       const prefixedKey = getPrefixedKey(key);
       let lock;
       const now = Date.now();
