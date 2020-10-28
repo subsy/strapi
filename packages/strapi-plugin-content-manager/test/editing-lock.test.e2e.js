@@ -72,8 +72,8 @@ describe('Editing Lock', () => {
           lastUpdatedAt: expect.any(String),
           lockedBy: {
             id: expect.anything(),
-            firstname: 'admin',
-            lastname: 'admin',
+            firstname: expect.any(String),
+            lastname: expect.anything(String),
             username: null,
           },
         },

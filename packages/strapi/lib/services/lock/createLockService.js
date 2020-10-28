@@ -93,7 +93,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
       const updateData = { expiresAt: now + ttl };
       const { isLockFree, lock: existingLock } = await this.get(key, now);
 
-      if (isLockFree || _.get(existingLock, 'uid') !== uid) {
+      if (isLockFree || !existingLock || existingLock.uid !== uid) {
         // can only extend locks that are still valid
         return {
           success: false,
@@ -120,7 +120,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
     async editMetadata({ key, metadata }, { mergeMetadata = false } = {}) {
       const prefixedKey = getPrefixedKey(key);
       const { lock: existingLock } = await this.get(key);
-      if (_.isUndefined(metadata)) {
+      if (_.isUndefined(metadata) || !existingLock) {
         return {
           success: false,
           lock: existingLock,
