@@ -105,7 +105,10 @@ const createLockService = ({ db }) => ({ prefix }) => {
         }
       }
 
-      const updatedLock = await lockQueries.update({ key: prefixedKey, uid }, updateData);
+      const updatedLock = await lockQueries.update(
+        { id: existingLock.id, key: prefixedKey, uid },
+        updateData
+      );
 
       return {
         success: !!updatedLock,
@@ -132,7 +135,7 @@ const createLockService = ({ db }) => ({ prefix }) => {
       }
 
       const updatedLock = await lockQueries.update(
-        { key: prefixedKey, uid: existingLock.uid },
+        { id: existingLock.id, key: prefixedKey, uid: existingLock.uid },
         { metadata: newMetadata }
       );
 
