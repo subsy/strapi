@@ -19,7 +19,7 @@ const lockModel = config => ({
       index: true,
     },
     key: {
-      type: 'text',
+      type: 'string',
       required: true,
       unique: true,
       index: true,
