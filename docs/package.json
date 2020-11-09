@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "vuepress dev",
-    "build": "vuepress build"
+    "build": "vuepress build",
+    "snyk-protect": "snyk protect",
+    "prepare": "yarn run snyk-protect"
   },
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
@@ -12,6 +14,8 @@
     "@vuepress/plugin-medium-zoom": "^1.2.0",
     "vuepress": "^1.2.0",
     "vuepress-plugin-element-tabs": "^0.1.8",
-    "vuepress-plugin-font-awesome": "1.90.6"
-  }
+    "vuepress-plugin-font-awesome": "1.90.6",
+    "snyk": "^1.424.4"
+  },
+  "snyk": true
 }
