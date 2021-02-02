@@ -24,7 +24,7 @@
     "@babel/preset-react": "^7.9.4",
     "@babel/runtime": "^7.9.2",
     "@buffetjs/core": "3.3.1",
-    "@buffetjs/custom": "3.3.1",
+    "@buffetjs/custom": "3.3.4",
     "@buffetjs/hooks": "3.3.1",
     "@buffetjs/icons": "3.3.1",
     "@buffetjs/styles": "3.3.1",
