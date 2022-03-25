@@ -1,0 +1,182 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.22.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-connector-bookshelf > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-connector-mongoose > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-middleware-views > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-email > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-provider-upload-aws-s3 > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-connector-bookshelf > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-connector-mongoose > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-email > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-graphql > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-provider-email-mailgun > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-database > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-generate > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-api > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-generate-api > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-controller > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-model > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-new > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-policy > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-service > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-database > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-generate > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-api > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-generate-api > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-controller > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-model > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-plugin > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-policy > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi > strapi-generate-service > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-email > strapi-provider-email-sendmail > strapi-utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-admin > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-manager > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-content-type-builder > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-documentation > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-upload > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
+    - strapi-plugin-users-permissions > strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:36:29.845Z'
