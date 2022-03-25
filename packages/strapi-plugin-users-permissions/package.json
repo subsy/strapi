@@ -9,11 +9,13 @@
     "required": true
   },
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "@buffetjs/core": "3.3.1",
-    "@buffetjs/custom": "3.3.1",
+    "@buffetjs/custom": "3.3.4",
     "@buffetjs/hooks": "3.3.1",
     "@buffetjs/icons": "3.3.1",
     "@buffetjs/styles": "3.3.1",
@@ -24,7 +26,7 @@
     "immutable": "^3.8.2",
     "jsonwebtoken": "^8.1.0",
     "koa2-ratelimit": "^0.9.0",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "purest": "3.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.9.0",
@@ -37,7 +39,8 @@
     "request": "^2.83.0",
     "strapi-helper-plugin": "3.2.5",
     "strapi-utils": "3.2.5",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "koa": "^2.8.0"
@@ -63,5 +66,6 @@
     "npm": ">=6.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
