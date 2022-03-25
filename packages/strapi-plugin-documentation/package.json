@@ -8,11 +8,13 @@
     "description": "Create an OpenAPI Document and visualize your API with SWAGGER UI."
   },
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
     "@buffetjs/core": "3.3.1",
-    "@buffetjs/custom": "3.3.1",
+    "@buffetjs/custom": "3.3.4",
     "@buffetjs/hooks": "3.3.1",
     "@buffetjs/icons": "3.3.1",
     "@buffetjs/styles": "3.3.1",
@@ -21,7 +23,7 @@
     "fs-extra": "^9.0.1",
     "immutable": "^3.8.2",
     "koa-static": "^5.0.0",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "moment": "^2.24.0",
     "path-to-regexp": "^3.1.0",
     "react": "^16.13.1",
@@ -36,7 +38,8 @@
     "redux-immutable": "^4.0.0",
     "reselect": "^4.0.0",
     "strapi-helper-plugin": "3.2.5",
-    "swagger-ui-dist": "3.35.0"
+    "swagger-ui-dist": "3.35.0",
+    "@snyk/protect": "latest"
   },
   "author": {
     "name": "soupette",
@@ -76,5 +79,6 @@
     "npm": ">=6.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
