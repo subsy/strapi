@@ -14,7 +14,8 @@
   "main": "./lib",
   "dependencies": {
     "@sendgrid/mail": "6.4.0",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "strapi": {
     "isProvider": true
@@ -44,7 +45,10 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
