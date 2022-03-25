@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@buffetjs/core": "3.3.1",
-    "@buffetjs/custom": "3.3.1",
+    "@buffetjs/custom": "3.3.4",
     "@buffetjs/hooks": "3.3.1",
     "@buffetjs/icons": "3.3.1",
     "@buffetjs/styles": "3.3.1",
@@ -17,7 +17,7 @@
     "@sindresorhus/slugify": "1.1.0",
     "fs-extra": "^9.0.1",
     "immutable": "^3.8.2",
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "pluralize": "^8.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.9.0",
@@ -33,7 +33,8 @@
     "strapi-generate-api": "3.2.5",
     "strapi-helper-plugin": "3.2.5",
     "strapi-utils": "3.2.5",
-    "yup": "^0.27.0"
+    "yup": "^0.27.0",
+    "@snyk/protect": "latest"
   },
   "author": {
     "name": "Strapi team",
@@ -56,5 +57,10 @@
     "npm": ">=6.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "scripts": {
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
+  },
+  "snyk": true
 }
