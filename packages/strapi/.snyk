@@ -1,5 +1,5 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.12.0
+version: v1.22.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   shelljs:
@@ -10,4 +10,42 @@ ignore:
     - '*':
         reason: Temporarily ignore
         expires: 2019-01-04T16:46:20.156Z
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-database > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-api > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-controller > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-model > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-new > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-plugin > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-policy > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-service > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-database > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-api > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-controller > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-model > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-plugin > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-policy > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
+    - strapi-generate-service > strapi-utils > lodash:
+        patched: '2022-03-25T19:27:53.904Z'
