@@ -21,10 +21,13 @@
   ],
   "dependencies": {
     "commander": "6.1.0",
-    "strapi-generate-new": "3.2.5"
+    "strapi-generate-new": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": {
     "email": "hi@strapi.io",
@@ -42,5 +45,6 @@
     "node": ">=10.16.0 <=14.x.x",
     "npm": ">=6.0.0"
   },
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
