@@ -14,11 +14,14 @@
   },
   "dependencies": {
     "fs-extra": "^9.0.1",
-    "lodash": "4.17.19",
-    "strapi-utils": "3.2.5"
+    "lodash": "4.17.20",
+    "strapi-utils": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": {
     "email": "hi@strapi.io",
@@ -44,5 +47,6 @@
     "npm": ">=6.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
