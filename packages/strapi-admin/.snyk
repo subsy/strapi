@@ -1,9 +1,21 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
-version: v1.12.0
+version: v1.22.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
   shelljs:
     - '*':
         reason: testing
         expires: 2019-01-04T14:35:17.133Z
-patch: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - strapi-helper-plugin > lodash:
+        patched: '2022-03-25T19:30:37.495Z'
+    - strapi-utils > lodash:
+        patched: '2022-03-25T19:30:37.495Z'
+    - strapi-helper-plugin > @buffetjs/custom > lodash:
+        patched: '2022-03-25T19:30:37.495Z'
+    - strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > lodash:
+        patched: '2022-03-25T19:30:37.495Z'
+    - strapi-helper-plugin > @buffetjs/custom > @buffetjs/core > @buffetjs/utils > lodash:
+        patched: '2022-03-25T19:30:37.495Z'
