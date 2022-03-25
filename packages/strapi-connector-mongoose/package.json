@@ -15,13 +15,14 @@
   },
   "main": "./lib",
   "dependencies": {
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "mongoose": "5.10.8",
     "mongoose-float": "^1.0.4",
     "mongoose-long": "^0.3.2",
     "pluralize": "^8.0.0",
     "semver": "^7.3.2",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "author": {
     "email": "hi@strapi.io",
@@ -48,7 +49,10 @@
   },
   "license": "SEE LICENSE IN LICENSE",
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
