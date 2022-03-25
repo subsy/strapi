@@ -9,12 +9,15 @@
     "required": true
   },
   "scripts": {
-    "test": "echo \"no tests yet\""
+    "test": "echo \"no tests yet\"",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "dependencies": {
-    "lodash": "4.17.19",
+    "lodash": "4.17.20",
     "strapi-provider-email-sendmail": "3.2.5",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "rimraf": "3.0.2",
@@ -41,5 +44,6 @@
     "npm": ">=6.0.0"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
