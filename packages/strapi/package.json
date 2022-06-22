@@ -60,10 +60,13 @@
     "strapi-generate-plugin": "3.2.5",
     "strapi-generate-policy": "3.2.5",
     "strapi-generate-service": "3.2.5",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.2.5",
+    "@snyk/protect": "latest"
   },
   "scripts": {
-    "postinstall": "node lib/utils/success.js"
+    "postinstall": "node lib/utils/success.js",
+    "prepublish": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "author": {
     "email": "hi@strapi.io",
@@ -132,5 +135,6 @@
     "react",
     "reactjs"
   ],
-  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53"
+  "gitHead": "231263a3535658bab1e9492c6aaaed8692d62a53",
+  "snyk": true
 }
