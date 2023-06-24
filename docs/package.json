@@ -15,7 +15,7 @@
     "vuepress": "^1.2.0",
     "vuepress-plugin-element-tabs": "^0.1.8",
     "vuepress-plugin-font-awesome": "1.90.6",
-    "snyk": "^1.424.4"
+    "snyk": "^1.685.0"
   },
   "snyk": true
 }
