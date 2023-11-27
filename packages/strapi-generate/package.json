@@ -20,7 +20,7 @@
     "fs-extra": "^9.0.1",
     "lodash": "4.17.19",
     "reportback": "^2.0.2",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.6.4"
   },
   "author": {
     "name": "Strapi team",
