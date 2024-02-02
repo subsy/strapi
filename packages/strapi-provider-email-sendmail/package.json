@@ -13,7 +13,7 @@
   "main": "./lib",
   "dependencies": {
     "sendmail": "^1.6.1",
-    "strapi-utils": "3.2.5"
+    "strapi-utils": "3.6.11"
   },
   "strapi": {
     "isProvider": true
