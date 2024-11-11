@@ -101,8 +101,8 @@
     "url-loader": "^1.1.2",
     "video-react": "^0.13.2",
     "webpack": "^4.40.1",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.4.1",
+    "webpack-cli": "^4.0.0",
+    "webpack-dev-server": "^4.6.0",
     "webpackbar": "^4.0.0",
     "yup": "^0.27.0"
   },
